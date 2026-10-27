@@ -24,13 +24,14 @@ export default function Home() {
           </ul>
         </nav>
 
-        <div className="space-y-12 md:flex md:space-y-0 md:gap-4">
+        <div className="space-y-12 md:flex md:gap-4 md:space-y-0">
           <div className="relative h-72 w-full border md:h-auto md:flex-1">
             <Image
               src={alissa}
               fill={true}
               alt="alissa"
               sizes="(min-width: 768px) 50vw, 100vw"
+              loading="eager"
             />
           </div>
 
