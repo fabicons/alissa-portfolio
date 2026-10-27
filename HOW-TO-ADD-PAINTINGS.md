@@ -22,11 +22,11 @@ group_name-of-the-painting_sizeXsize.jpg
 
 Three parts, separated by underscores ( `_` ):
 
-| Part | What it means | Example |
-|------|----------------|---------|
-| **group** | Where it shows up: `col1`, `col2`, `col3`… for a collection, or `others` for *Current Work* | `col1` |
-| **name** | The title. Use dashes ( `-` ) instead of spaces. All lowercase. | `entre-mar-y-cel` |
-| **size** | Canvas size in centimetres, as `widthXheight` | `100x100` |
+| Part      | What it means                                                                               | Example           |
+| --------- | ------------------------------------------------------------------------------------------- | ----------------- |
+| **group** | Where it shows up: `col1`, `col2`, `col3`… for a collection, or `others` for _Current Work_ | `col1`            |
+| **name**  | The title. Use dashes ( `-` ) instead of spaces. All lowercase.                             | `entre-mar-y-cel` |
+| **size**  | Canvas size in centimetres, as `widthXheight`                                               | `100x100`         |
 
 Put it together:
 
@@ -51,15 +51,19 @@ others_amor_130x100.jpg           →  "Amor",             Current Work
 ## Common things you'll want to do
 
 ### ➕ Add a painting
+
 Drop a correctly-named image into `public/images`. That's it — it appears automatically.
 
 ### 🗑️ Remove a painting
+
 Delete its file from `public/images`.
 
 ### ✏️ Rename a painting or fix its size
+
 Rename the file (keep the rule above). The title and size on the site update to match.
 
 ### 📚 Add a whole new collection
+
 Use the next number: name files `col3_...`, `col4_...`, etc. A new **“Collection III”** page, home-page card, and menu link are created automatically.
 
 ---

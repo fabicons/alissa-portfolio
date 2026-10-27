@@ -5,7 +5,8 @@ import { getCollection } from "@/app/_data/paintings";
 
 export const metadata: Metadata = {
   title: "Collection II — Alissa Borsani",
-  description: "Collection II by contemporary Mallorcan painter Alissa Borsani.",
+  description:
+    "Collection II by contemporary Mallorcan painter Alissa Borsani.",
 };
 
 export default async function CollectionTwoPage() {

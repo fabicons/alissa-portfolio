@@ -2,7 +2,8 @@ import Image from "next/image";
 import { getBackgroundPainting } from "@/app/_data/paintings";
 
 /**
- * Soft, light-blue washed painting used as a fixed page background
+ * A single painting zoomed in so only its brushwork and texture fill the
+ * screen, overlaid with a soft light-blue wash so text stays readable
  * (per the "light blue background / painting background" notes in the mockups).
  */
 export default async function BackgroundArt() {
@@ -17,10 +18,10 @@ export default async function BackgroundArt() {
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-20"
+          className="scale-[1.9] object-cover object-center"
         />
       )}
-      <div className="absolute inset-0 bg-linear-to-b from-[#eaf1fb]/80 via-white/85 to-[#eaf1fb]/80" />
+      <div className="absolute inset-0 bg-linear-to-b from-[#e8eff9]/82 via-white/74 to-[#e8eff9]/84" />
     </div>
   );
 }

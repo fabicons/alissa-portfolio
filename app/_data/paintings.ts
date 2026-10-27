@@ -53,14 +53,32 @@ export type Collection = {
 
 const IMAGES_DIR = path.join(process.cwd(), "public", "images");
 
+/**
+ * Preferred image used as the site-wide textured background. If this file is
+ * missing it falls back to the first available painting.
+ */
+const BACKGROUND_FILE = "col1_aigua-cristalina_50x60.jpg";
+
 /** {group}_{name}_{WxH}.{ext} — e.g. col1_aigua-cristalina_50x60.jpg */
 const FILE_RE =
   /^(col\d+|others)_(.+)_(\d+(?:\.\d+)?)x(\d+(?:\.\d+)?)\.(?:jpe?g|png|webp|avif)$/i;
 
 /** Small connector words kept lower-case in titles (unless first word). */
 const MINOR_WORDS = new Set([
-  "de", "del", "la", "las", "el", "los", "y", "o", "en", "con", "a",
-  "the", "of", "and",
+  "de",
+  "del",
+  "la",
+  "las",
+  "el",
+  "los",
+  "y",
+  "o",
+  "en",
+  "con",
+  "a",
+  "the",
+  "of",
+  "and",
 ]);
 
 type ParsedFile = {
@@ -74,7 +92,11 @@ type ParsedFile = {
 
 function toRoman(value: number): string {
   const numerals: [number, string][] = [
-    [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"],
+    [10, "X"],
+    [9, "IX"],
+    [5, "V"],
+    [4, "IV"],
+    [1, "I"],
   ];
   let remaining = value;
   let result = "";
@@ -165,7 +187,9 @@ export async function getCollections(): Promise<Collection[]> {
 }
 
 /** A single collection by slug ("collection-1"), or undefined if it has no images. */
-export async function getCollection(slug: string): Promise<Collection | undefined> {
+export async function getCollection(
+  slug: string,
+): Promise<Collection | undefined> {
   const match = /^collection-(\d+)$/.exec(slug);
   if (!match) return undefined;
   const number = Number(match[1]);
@@ -188,7 +212,9 @@ export async function getCurrentWork(): Promise<Painting[]> {
 }
 
 /** First painting of each collection, used as the home-page link covers. */
-export async function getCollectionCovers(): Promise<Record<string, StaticImageData>> {
+export async function getCollectionCovers(): Promise<
+  Record<string, StaticImageData>
+> {
   const collections = await getCollections();
   const covers: Record<string, StaticImageData> = {};
   for (const collection of collections) {
@@ -198,11 +224,12 @@ export async function getCollectionCovers(): Promise<Record<string, StaticImageD
   return covers;
 }
 
-/** The piece used as the subtle background across the site (first available). */
+/** The piece used as the textured background across the site. */
 export async function getBackgroundPainting(): Promise<StaticImageData | null> {
-  const collections = await getCollections();
-  const first = collections[0]?.paintings[0];
-  if (first) return first.image;
-  const others = await getCurrentWork();
-  return others[0]?.image ?? null;
+  const parsed = listParsedFiles();
+  const choice =
+    parsed.find((file) => file.file === BACKGROUND_FILE) ?? parsed[0];
+  if (!choice) return null;
+  const { image } = await toPainting(choice);
+  return image;
 }

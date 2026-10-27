@@ -24,7 +24,7 @@ export default async function CurrentWorkPage() {
           >
             ALISSA BORSANI
           </Link>
-          <p className="mt-6 text-sm uppercase tracking-[0.3em] text-[#011f60]/60">
+          <p className="mt-6 text-sm tracking-[0.3em] text-[#011f60]/60 uppercase">
             — Current Work —
           </p>
         </header>

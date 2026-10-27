@@ -17,7 +17,7 @@ export default async function Home() {
           <h1 className="text-4xl font-semibold tracking-[0.15em] sm:text-6xl lg:text-7xl">
             ALISSA BORSANI
           </h1>
-          <p className="mt-4 text-sm uppercase tracking-[0.3em] text-[#011f60]/70 sm:text-base">
+          <p className="mt-4 text-sm tracking-[0.3em] text-[#011f60]/70 uppercase sm:text-base">
             Contemporary artist · Mallorca
           </p>
           <div className="mt-10">
@@ -78,27 +78,31 @@ export default async function Home() {
             />
           </div>
           <div className="space-y-5">
-            <h2 id="about-heading" className="text-3xl tracking-wide sm:text-4xl">
+            <h2
+              id="about-heading"
+              className="text-3xl tracking-wide sm:text-4xl"
+            >
               About the artist
             </h2>
             <p className="text-base leading-relaxed text-[#011f60]/80 sm:text-lg">
               {/* TODO: Replace with Alissa's real bio. */}
               Alissa Borsani is a contemporary painter based in Mallorca, where
-              the Mediterranean light and the endless blue of the sea shape every
-              canvas. Her work moves between stillness and motion, searching for
-              that feeling of freedom found on the water&apos;s horizon.
+              the Mediterranean light and the endless blue of the sea shape
+              every canvas. Her work moves between stillness and motion,
+              searching for that feeling of freedom found on the water&apos;s
+              horizon.
             </p>
             <p className="text-base leading-relaxed text-[#011f60]/80 sm:text-lg">
               {/* TODO: Replace with Alissa's real bio. */}
-              Working primarily in blues and soft, luminous whites, each piece is
-              an invitation to pause, breathe, and look a little longer.
+              Working primarily in blues and soft, luminous whites, each piece
+              is an invitation to pause, breathe, and look a little longer.
             </p>
           </div>
         </section>
 
         {/* Quote / poem */}
         <section className="mt-20 w-full max-w-3xl sm:mt-24">
-          <blockquote className="border-l-2 border-[#011f60]/40 pl-6 text-center text-2xl italic leading-relaxed sm:text-3xl">
+          <blockquote className="border-l-2 border-[#011f60]/40 pl-6 text-center text-2xl leading-relaxed italic sm:text-3xl">
             {/* TODO: Replace with Alissa's chosen poem or quote. */}
             &quot;The sea does not ask permission to be blue — it simply is, and
             in its stillness I find my own.&quot;

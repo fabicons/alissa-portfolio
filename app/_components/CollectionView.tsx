@@ -5,7 +5,11 @@ import PaintingFrame from "@/app/_components/PaintingFrame";
 import type { Collection } from "@/app/_data/paintings";
 
 /** Renders a full collection page: title, vertically stacked paintings, switcher. */
-export default function CollectionView({ collection }: { collection: Collection }) {
+export default function CollectionView({
+  collection,
+}: {
+  collection: Collection;
+}) {
   return (
     <>
       <BackgroundArt />
@@ -17,7 +21,7 @@ export default function CollectionView({ collection }: { collection: Collection 
           >
             ALISSA BORSANI
           </Link>
-          <p className="mt-6 text-sm uppercase tracking-[0.3em] text-[#011f60]/60">
+          <p className="mt-6 text-sm tracking-[0.3em] text-[#011f60]/60 uppercase">
             — {collection.heading} —
           </p>
         </header>

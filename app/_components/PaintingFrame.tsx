@@ -27,7 +27,7 @@ export default function PaintingFrame({
         />
       </div>
       <figcaption className="mt-4 text-center">
-        <span className="block text-xl italic tracking-wide sm:text-2xl">
+        <span className="block text-xl tracking-wide italic sm:text-2xl">
           {title}
         </span>
         <span className="mt-1 block text-sm text-[#011f60]/60">{size}</span>

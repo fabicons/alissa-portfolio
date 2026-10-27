@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -10,44 +11,57 @@ const links = [
 ];
 
 /**
- * Primary site navigation. Rendered as a soft "oval" card on the home page
- * (per the mockups) and inline on inner pages. The active route is highlighted.
+ * Primary site navigation: an elegant, letter-spaced horizontal menu with thin
+ * dividers and an underline that grows from the centre on hover. The active
+ * route stays underlined. The "hero" variant sits open on the landing page; the
+ * "inline" variant is framed by a hairline bar on inner pages.
  */
-export default function SiteNav({ variant = "inline" }: { variant?: "hero" | "inline" }) {
+export default function SiteNav({
+  variant = "inline",
+}: {
+  variant?: "hero" | "inline";
+}) {
   const pathname = usePathname();
 
   return (
     <nav
       aria-label="Collections"
       className={
-        variant === "hero"
-          ? "rounded-[50%] border border-[#011f60]/20 bg-white/80 px-8 py-6 shadow-sm backdrop-blur-sm sm:px-14 sm:py-8"
-          : "w-full border-y border-[#011f60]/15 bg-white/70 py-3 backdrop-blur-sm"
+        variant === "inline"
+          ? "w-full border-y border-[#011f60]/15 bg-white/55 py-4 backdrop-blur-sm"
+          : "w-full"
       }
     >
-      <ul
-        className={
-          variant === "hero"
-            ? "flex flex-col items-center gap-2 text-lg sm:text-xl"
-            : "flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-base sm:text-lg"
-        }
-      >
-        {links.map(({ href, label }) => {
+      <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.25em] sm:gap-x-9 sm:text-sm">
+        {links.map(({ href, label }, index) => {
           const active = pathname === href;
           return (
-            <li key={href}>
-              <Link
-                href={href}
-                aria-current={active ? "page" : undefined}
-                className={`relative inline-block tracking-wide transition-colors hover:text-[#011f60] ${
-                  active
-                    ? "text-[#011f60] after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:bg-[#011f60]"
-                    : "text-[#011f60]/70"
-                }`}
-              >
-                {label}
-              </Link>
-            </li>
+            <Fragment key={href}>
+              {index > 0 && (
+                <li
+                  aria-hidden
+                  className="hidden h-3.5 w-px bg-[#011f60]/25 sm:block"
+                />
+              )}
+              <li>
+                <Link
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={`group relative inline-block py-1 transition-colors ${
+                    active
+                      ? "text-[#011f60]"
+                      : "text-[#011f60]/55 hover:text-[#011f60]"
+                  }`}
+                >
+                  {label}
+                  <span
+                    className={`absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-[#011f60] transition-all duration-300 ${
+                      active ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </Link>
+              </li>
+            </Fragment>
           );
         })}
       </ul>
