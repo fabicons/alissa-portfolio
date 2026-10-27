@@ -16,15 +16,22 @@ export default function Gallery({ paintings }: { paintings: Painting[] }) {
     <>
       <div className="mt-14 flex w-full flex-col gap-20 sm:mt-16 sm:gap-24">
         {paintings.map((painting, index) => (
-          <button
+          <div
             key={painting.title}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => setOpenIndex(index)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setOpenIndex(index);
+              }
+            }}
             aria-label={`View ${painting.title} larger`}
-            className="group block cursor-zoom-in rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#011f60]/40 focus-visible:ring-offset-4"
+            className="group block w-full cursor-pointer touch-manipulation rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#011f60]/40 focus-visible:ring-offset-4"
           >
             <PaintingFrame painting={painting} priority={index === 0} />
-          </button>
+          </div>
         ))}
       </div>
 

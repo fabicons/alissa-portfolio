@@ -1,13 +1,55 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Painting } from "@/app/_data/paintings";
 
 /**
+ * The current painting on stage. Kept as its own component (keyed by index in
+ * the parent) so that each time the painting changes it remounts, replaying the
+ * fade / slide-in animation and resetting the skeleton loading state.
+ */
+function Stage({ painting }: { painting: Painting }) {
+  const [loaded, setLoaded] = useState(false);
+  const { image, title, size } = painting;
+
+  // Size the stage to the largest box that fits both the available height
+  // (--lb-h, set responsively on the figure) and width (92vw) while keeping the
+  // painting's aspect ratio. This scales smaller source images up so every
+  // painting fills the same amount of space.
+  return (
+    <div
+      className="relative animate-[lb-enter_360ms_cubic-bezier(0.22,1,0.36,1)]"
+      style={{
+        width: `min(92vw, calc(var(--lb-h) * ${image.width} / ${image.height}))`,
+        aspectRatio: `${image.width} / ${image.height}`,
+      }}
+    >
+      {/* Skeleton shown until the full-resolution image has loaded. It fills the
+          explicitly sized box, so it matches the final image exactly. */}
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse rounded-sm bg-white/10 ring-1 ring-white/10" />
+      )}
+      <Image
+        src={image}
+        alt={`${title}, ${size}`}
+        fill
+        sizes="92vw"
+        priority
+        onLoad={() => setLoaded(true)}
+        className={`rounded-sm object-contain shadow-2xl transition-opacity duration-500 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
+  );
+}
+
+/**
  * Full-screen slideshow for viewing a painting in detail. Supports previous /
- * next navigation (buttons, arrow keys), closing (button, Escape, backdrop
- * click) and wraps around the collection.
+ * next navigation (buttons, arrow keys, thumbnail strip), closing (button,
+ * Escape, backdrop click), a loading skeleton and a subtle slide-in between
+ * paintings. Wraps around the collection.
  */
 export default function Lightbox({
   paintings,
@@ -23,6 +65,7 @@ export default function Lightbox({
   const count = paintings.length;
   const painting = paintings[index];
   const closeRef = useRef<HTMLButtonElement>(null);
+  const activeThumbRef = useRef<HTMLButtonElement>(null);
 
   const goPrev = useCallback(
     () => onIndexChange((index - 1 + count) % count),
@@ -54,6 +97,15 @@ export default function Lightbox({
     };
   }, []);
 
+  // Keep the active thumbnail in view as the selection moves.
+  useEffect(() => {
+    activeThumbRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [index]);
+
   if (!painting) return null;
 
   return (
@@ -62,7 +114,7 @@ export default function Lightbox({
       aria-modal="true"
       aria-label={`${painting.title}, ${painting.size}`}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#06143a]/92 p-4 backdrop-blur-sm sm:p-8"
+      className="fixed inset-0 z-50 flex flex-col bg-[#06143a]/92 backdrop-blur-sm"
     >
       {/* Close */}
       <button
@@ -70,7 +122,7 @@ export default function Lightbox({
         type="button"
         onClick={onClose}
         aria-label="Close"
-        className="absolute top-4 right-4 flex h-11 w-11 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white sm:top-6 sm:right-6"
+        className="absolute top-4 right-4 z-10 flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white sm:top-6 sm:right-6"
       >
         <svg
           viewBox="0 0 24 24"
@@ -93,7 +145,7 @@ export default function Lightbox({
             goPrev();
           }}
           aria-label="Previous painting"
-          className="absolute top-1/2 left-2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white sm:left-6"
+          className="absolute top-1/2 left-2 z-10 flex h-12 w-12 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white sm:left-6"
         >
           <svg
             viewBox="0 0 24 24"
@@ -109,21 +161,13 @@ export default function Lightbox({
         </button>
       )}
 
-      {/* Image + caption */}
+      {/* Stage + caption */}
       <figure
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-full max-w-full flex-col items-center"
+        className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pt-16 pb-4 [--lb-h:56svh] sm:[--lb-h:70svh]"
       >
-        <Image
-          key={painting.title}
-          src={painting.image}
-          alt={`${painting.title}, ${painting.size}`}
-          placeholder="blur"
-          sizes="92vw"
-          priority
-          className="h-auto max-h-[78vh] w-auto max-w-[92vw] rounded-sm object-contain shadow-2xl"
-        />
-        <figcaption className="mt-5 text-center text-white">
+        <Stage key={index} painting={painting} />
+        <figcaption className="mt-5 shrink-0 text-center text-white">
           <span className="block text-lg tracking-wide italic sm:text-xl">
             {painting.title}
           </span>
@@ -147,7 +191,7 @@ export default function Lightbox({
             goNext();
           }}
           aria-label="Next painting"
-          className="absolute top-1/2 right-2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white sm:right-6"
+          className="absolute top-1/2 right-2 z-10 flex h-12 w-12 -translate-y-1/2 touch-manipulation items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10 hover:text-white sm:right-6"
         >
           <svg
             viewBox="0 0 24 24"
@@ -161,6 +205,43 @@ export default function Lightbox({
             <path d="M9 6l6 6-6 6" />
           </svg>
         </button>
+      )}
+
+      {/* Thumbnail strip */}
+      {count > 1 && (
+        <div
+          onClick={(event) => event.stopPropagation()}
+          className="shrink-0 border-t border-white/10 bg-black/25"
+        >
+          <div className="mx-auto flex max-w-3xl items-center gap-2 overflow-x-auto px-4 py-3">
+            {paintings.map((item, i) => {
+              const active = i === index;
+              return (
+                <button
+                  key={item.title}
+                  ref={active ? activeThumbRef : undefined}
+                  type="button"
+                  onClick={() => onIndexChange(i)}
+                  aria-label={`View ${item.title}`}
+                  aria-current={active ? "true" : undefined}
+                  className={`relative h-14 w-14 shrink-0 touch-manipulation overflow-hidden rounded-sm transition duration-200 sm:h-16 sm:w-16 ${
+                    active
+                      ? "ring-2 ring-white"
+                      : "opacity-55 ring-1 ring-white/20 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );
