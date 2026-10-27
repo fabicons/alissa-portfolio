@@ -1,36 +1,41 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { StaticImageData } from "next/image";
 
-// Collection I
-import col1AiguaCristalina from "@/public/images/col1_aigua-cristalina_50x60.jpg";
-import col1Calma from "@/public/images/col1_calma_80x80.jpg";
-import col1EntreMarYCel from "@/public/images/col1_entre-mar-y-cel_100x100.jpg";
-import col1FullMoon from "@/public/images/col1_full-moon_50x80.jpg";
-import col1Horizon from "@/public/images/col1_horizon_60x60.jpg";
-import col1IslaBonita from "@/public/images/col1_isla-bonita_150x300.jpg";
-import col1LaBahia from "@/public/images/col1_la-bahia_100x100.jpg";
-import col1Midnight from "@/public/images/col1_midnight_50x70.jpg";
-import col1RiversRun from "@/public/images/col1_rivers-run_100x100.jpg";
-import col1TheCalling from "@/public/images/col1_the-calling_50x80.jpg";
-
-// Collection II
-import col2ChicaBugambilia from "@/public/images/col2_chica-bugambilia_60x80.jpg";
-import col2Daylight from "@/public/images/col2_daylight_80x80.jpg";
-import col2Delfina from "@/public/images/col2_delfina_60x50.jpg";
-import col2Dusk from "@/public/images/col2_dusk_110x110.jpg";
-import col2Ella from "@/public/images/col2_ella_100x100.jpg";
-import col2Ellas from "@/public/images/col2_ellas_50x80.jpg";
-import col2LagrimasDeLuna from "@/public/images/col2_lagrimas-de-luna_100x100.jpg";
-import col2Tamed from "@/public/images/col2_tamed_60x60.jpg";
-import col2Vaimiti from "@/public/images/col2_vaimiti_110x100.jpg";
-
-// Current work / others
-import othersAmor from "@/public/images/others_amor_130x100.jpg";
-import othersParadise from "@/public/images/others_paradise_60x80.jpg";
+/**
+ * Filename-driven painting data.
+ *
+ * Alissa can manage the whole site just by adding / renaming / removing image
+ * files in `public/images` — no code changes required. Every image must follow
+ * this naming convention (lower-case, words separated by dashes):
+ *
+ *     {group}_{name-of-the-painting}_{widthXheight}.{jpg|png|webp|avif}
+ *
+ *   • group  →  "col1", "col2", "col3", … for a collection, or "others" for
+ *               the Current Work page. (Adding a "col3_…" file automatically
+ *               creates a Collection III — no code needed.)
+ *   • name   →  dashes become spaces and each word is capitalised,
+ *               e.g. "entre-mar-y-cel" → "Entre Mar y Cel".
+ *   • size   →  canvas size in centimetres, e.g. "50x60" → "50 × 60 cm".
+ *
+ * Examples:
+ *     col1_aigua-cristalina_50x60.jpg
+ *     col2_delfina_60x50.jpg
+ *     others_amor_130x100.jpg
+ *
+ * IMPORTANT: images must be JPG, PNG, WebP or AVIF. Photos straight from an
+ * iPhone are usually `.heic` and must be exported/converted to `.jpg` first.
+ *
+ * Next.js image optimizations are fully preserved: each file is loaded with a
+ * dynamic `import()` (documented Next.js pattern) which provides automatic
+ * width, height and a blur-up placeholder, on top of the usual resizing,
+ * modern formats (AVIF/WebP) and lazy loading.
+ */
 
 export type Painting = {
-  /** Display title of the piece. */
+  /** Display title, derived from the file name. */
   title: string;
-  /** Statically imported image (provides real pixel dimensions). */
+  /** Statically analysed image (real pixel size + blur placeholder). */
   image: StaticImageData;
   /** Physical canvas size in centimetres, e.g. "50 × 60 cm". */
   size: string;
@@ -39,62 +44,165 @@ export type Painting = {
 export type Collection = {
   /** URL slug, e.g. "collection-1". */
   slug: string;
-  /** Short label used in navigation, e.g. "Collection I". */
+  /** Display label, e.g. "Collection I". */
   name: string;
-  /** Roman-numeral styled heading, e.g. "— Collection I —". */
+  /** Heading shown on the collection page, e.g. "Collection I". */
   heading: string;
   paintings: Painting[];
 };
 
-const cm = (size: string) => size.replace("x", " × ") + " cm";
+const IMAGES_DIR = path.join(process.cwd(), "public", "images");
 
-export const collectionOne: Collection = {
-  slug: "collection-1",
-  name: "Collection I",
-  heading: "Collection I",
-  paintings: [
-    { title: "Aigua Cristalina", image: col1AiguaCristalina, size: cm("50x60") },
-    { title: "Calma", image: col1Calma, size: cm("80x80") },
-    { title: "Entre Mar y Cel", image: col1EntreMarYCel, size: cm("100x100") },
-    { title: "Full Moon", image: col1FullMoon, size: cm("50x80") },
-    { title: "Horizon", image: col1Horizon, size: cm("60x60") },
-    { title: "Isla Bonita", image: col1IslaBonita, size: cm("150x300") },
-    { title: "La Bahía", image: col1LaBahia, size: cm("100x100") },
-    { title: "Midnight", image: col1Midnight, size: cm("50x70") },
-    { title: "Rivers Run", image: col1RiversRun, size: cm("100x100") },
-    { title: "The Calling", image: col1TheCalling, size: cm("50x80") },
-  ],
+/** {group}_{name}_{WxH}.{ext} — e.g. col1_aigua-cristalina_50x60.jpg */
+const FILE_RE =
+  /^(col\d+|others)_(.+)_(\d+(?:\.\d+)?)x(\d+(?:\.\d+)?)\.(?:jpe?g|png|webp|avif)$/i;
+
+/** Small connector words kept lower-case in titles (unless first word). */
+const MINOR_WORDS = new Set([
+  "de", "del", "la", "las", "el", "los", "y", "o", "en", "con", "a",
+  "the", "of", "and",
+]);
+
+type ParsedFile = {
+  group: string;
+  /** Collection number if the group is "colN", otherwise null. */
+  collectionNumber: number | null;
+  title: string;
+  size: string;
+  file: string;
 };
 
-export const collectionTwo: Collection = {
-  slug: "collection-2",
-  name: "Collection II",
-  heading: "Collection II",
-  paintings: [
-    { title: "Chica Bugambilia", image: col2ChicaBugambilia, size: cm("60x80") },
-    { title: "Daylight", image: col2Daylight, size: cm("80x80") },
-    { title: "Delfina", image: col2Delfina, size: cm("60x50") },
-    { title: "Dusk", image: col2Dusk, size: cm("110x110") },
-    { title: "Ella", image: col2Ella, size: cm("100x100") },
-    { title: "Ellas", image: col2Ellas, size: cm("50x80") },
-    { title: "Lágrimas de Luna", image: col2LagrimasDeLuna, size: cm("100x100") },
-    { title: "Tamed", image: col2Tamed, size: cm("60x60") },
-    { title: "Vaimiti", image: col2Vaimiti, size: cm("110x100") },
-  ],
-};
+function toRoman(value: number): string {
+  const numerals: [number, string][] = [
+    [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"],
+  ];
+  let remaining = value;
+  let result = "";
+  for (const [amount, symbol] of numerals) {
+    while (remaining >= amount) {
+      result += symbol;
+      remaining -= amount;
+    }
+  }
+  return result || String(value);
+}
 
-export const currentWork: Painting[] = [
-  { title: "Amor", image: othersAmor, size: cm("130x100") },
-  { title: "Paradise", image: othersParadise, size: cm("60x80") },
-];
+function toTitle(nameSlug: string): string {
+  return nameSlug
+    .split("-")
+    .filter(Boolean)
+    .map((word, index) =>
+      index > 0 && MINOR_WORDS.has(word.toLowerCase())
+        ? word.toLowerCase()
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+    )
+    .join(" ");
+}
 
-export const collections: Collection[] = [collectionOne, collectionTwo];
+function parseFile(file: string): ParsedFile | null {
+  const match = FILE_RE.exec(file);
+  if (!match) return null;
+  const [, groupRaw, nameRaw, width, height] = match;
+  const group = groupRaw.toLowerCase();
+  const collectionMatch = /^col(\d+)$/.exec(group);
+  return {
+    group,
+    collectionNumber: collectionMatch ? Number(collectionMatch[1]) : null,
+    title: toTitle(nameRaw),
+    size: `${width} × ${height} cm`,
+    file,
+  };
+}
 
-/** The piece used as the subtle background across the site. */
-export const backgroundPainting = col1IslaBonita;
+/** Read and parse every conforming image file, sorted alphabetically by title. */
+function listParsedFiles(): ParsedFile[] {
+  let files: string[];
+  try {
+    files = fs.readdirSync(IMAGES_DIR);
+  } catch {
+    return [];
+  }
+  return files
+    .map(parseFile)
+    .filter((parsed): parsed is ParsedFile => parsed !== null)
+    .sort((a, b) => a.title.localeCompare(b.title));
+}
 
-/** Representative cover images for the home-page collection links. */
-export const collectionCovers = {
-  "collection-1": col1EntreMarYCel,
-  "collection-2": col2Ella,
-} as const;
+/**
+ * Dynamically import a local image so Next.js still provides width, height and
+ * a blur placeholder. The static `@/public/images/` prefix means only files in
+ * that folder are ever bundled.
+ */
+async function toPainting(parsed: ParsedFile): Promise<Painting> {
+  const { default: image } = (await import(
+    `@/public/images/${parsed.file}`
+  )) as { default: StaticImageData };
+  return { title: parsed.title, image, size: parsed.size };
+}
+
+function collectionMeta(collectionNumber: number) {
+  const name = `Collection ${toRoman(collectionNumber)}`;
+  return { slug: `collection-${collectionNumber}`, name, heading: name };
+}
+
+/** All collections (col1, col2, …), ordered by number. */
+export async function getCollections(): Promise<Collection[]> {
+  const grouped = new Map<number, ParsedFile[]>();
+  for (const parsed of listParsedFiles()) {
+    if (parsed.collectionNumber === null) continue;
+    const bucket = grouped.get(parsed.collectionNumber) ?? [];
+    bucket.push(parsed);
+    grouped.set(parsed.collectionNumber, bucket);
+  }
+
+  const numbers = [...grouped.keys()].sort((a, b) => a - b);
+  return Promise.all(
+    numbers.map(async (number) => ({
+      ...collectionMeta(number),
+      paintings: await Promise.all(grouped.get(number)!.map(toPainting)),
+    })),
+  );
+}
+
+/** A single collection by slug ("collection-1"), or undefined if it has no images. */
+export async function getCollection(slug: string): Promise<Collection | undefined> {
+  const match = /^collection-(\d+)$/.exec(slug);
+  if (!match) return undefined;
+  const number = Number(match[1]);
+  const paintings = await Promise.all(
+    listParsedFiles()
+      .filter((parsed) => parsed.collectionNumber === number)
+      .map(toPainting),
+  );
+  if (paintings.length === 0) return undefined;
+  return { ...collectionMeta(number), paintings };
+}
+
+/** Paintings in the "others" group, shown on the Current Work page. */
+export async function getCurrentWork(): Promise<Painting[]> {
+  return Promise.all(
+    listParsedFiles()
+      .filter((parsed) => parsed.group === "others")
+      .map(toPainting),
+  );
+}
+
+/** First painting of each collection, used as the home-page link covers. */
+export async function getCollectionCovers(): Promise<Record<string, StaticImageData>> {
+  const collections = await getCollections();
+  const covers: Record<string, StaticImageData> = {};
+  for (const collection of collections) {
+    const cover = collection.paintings[0];
+    if (cover) covers[collection.slug] = cover.image;
+  }
+  return covers;
+}
+
+/** The piece used as the subtle background across the site (first available). */
+export async function getBackgroundPainting(): Promise<StaticImageData | null> {
+  const collections = await getCollections();
+  const first = collections[0]?.paintings[0];
+  if (first) return first.image;
+  const others = await getCurrentWork();
+  return others[0]?.image ?? null;
+}

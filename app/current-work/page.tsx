@@ -3,14 +3,16 @@ import Link from "next/link";
 import BackgroundArt from "@/app/_components/BackgroundArt";
 import PaintingFrame from "@/app/_components/PaintingFrame";
 import SiteNav from "@/app/_components/SiteNav";
-import { currentWork } from "@/app/_data/paintings";
+import { getCurrentWork } from "@/app/_data/paintings";
 
 export const metadata: Metadata = {
   title: "Current Work — Alissa Borsani",
   description: "Recent and in-progress paintings by Alissa Borsani.",
 };
 
-export default function CurrentWorkPage() {
+export default async function CurrentWorkPage() {
+  const currentWork = await getCurrentWork();
+
   return (
     <>
       <BackgroundArt />

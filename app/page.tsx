@@ -3,9 +3,11 @@ import Link from "next/link";
 import alissa from "@/public/images/alissa.jpg";
 import BackgroundArt from "@/app/_components/BackgroundArt";
 import SiteNav from "@/app/_components/SiteNav";
-import { collectionCovers, collections } from "@/app/_data/paintings";
+import { getCollections } from "@/app/_data/paintings";
 
-export default function Home() {
+export default async function Home() {
+  const collections = await getCollections();
+
   return (
     <>
       <BackgroundArt />
@@ -28,36 +30,37 @@ export default function Home() {
           aria-label="Collections"
           className="mt-16 grid w-full gap-8 sm:mt-20 sm:grid-cols-2"
         >
-          {collections.map((collection) => (
-            <Link
-              key={collection.slug}
-              href={`/${collection.slug}`}
-              className="group flex flex-col"
-            >
-              <div className="relative aspect-4/5 w-full overflow-hidden rounded-sm bg-white shadow-[0_15px_50px_-20px_rgba(1,31,96,0.4)] ring-1 ring-[#011f60]/10">
-                <Image
-                  src={
-                    collectionCovers[
-                      collection.slug as keyof typeof collectionCovers
-                    ]
-                  }
-                  alt={`${collection.name} cover painting`}
-                  fill
-                  sizes="(min-width: 640px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-[#011f60]/55 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-5 text-white">
-                  <span className="text-2xl tracking-wide sm:text-3xl">
-                    {collection.name}
-                  </span>
-                  <span className="text-sm opacity-80 transition-transform duration-300 group-hover:translate-x-1">
-                    View →
-                  </span>
+          {collections.map((collection) => {
+            const cover = collection.paintings[0]?.image;
+            return (
+              <Link
+                key={collection.slug}
+                href={`/${collection.slug}`}
+                className="group flex flex-col"
+              >
+                <div className="relative aspect-4/5 w-full overflow-hidden rounded-sm bg-white shadow-[0_15px_50px_-20px_rgba(1,31,96,0.4)] ring-1 ring-[#011f60]/10">
+                  {cover && (
+                    <Image
+                      src={cover}
+                      alt={`${collection.name} cover painting`}
+                      fill
+                      sizes="(min-width: 640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-linear-to-t from-[#011f60]/55 via-transparent to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-5 text-white">
+                    <span className="text-2xl tracking-wide sm:text-3xl">
+                      {collection.name}
+                    </span>
+                    <span className="text-sm opacity-80 transition-transform duration-300 group-hover:translate-x-1">
+                      View →
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </section>
 
         {/* About / artist */}

@@ -1,11 +1,17 @@
 import Link from "next/link";
-import { collections } from "@/app/_data/paintings";
+import { getCollections } from "@/app/_data/paintings";
 
 /**
  * Footer navigation shown on collection pages, letting visitors move between
  * collections and back home (the "Coll I / Coll II" switcher in the mockups).
  */
-export default function CollectionSwitcher({ currentSlug }: { currentSlug: string }) {
+export default async function CollectionSwitcher({
+  currentSlug,
+}: {
+  currentSlug: string;
+}) {
+  const collections = await getCollections();
+
   return (
     <nav
       aria-label="Browse collections"
