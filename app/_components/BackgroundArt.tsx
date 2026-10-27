@@ -10,7 +10,7 @@ export default async function BackgroundArt() {
   const background = await getBackgroundPainting();
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 h-dvh">
       {background && (
         <Image
           src={background}

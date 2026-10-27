@@ -32,7 +32,7 @@ export default function SiteNav({
           : "w-full"
       }
     >
-      <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-[0.25em] sm:gap-x-9 sm:text-sm">
+      <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs tracking-[0.25em] uppercase sm:gap-x-9 sm:text-sm">
         {links.map(({ href, label }, index) => {
           const active = pathname === href;
           return (

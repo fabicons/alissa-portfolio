@@ -1,10 +1,10 @@
 import Link from "next/link";
 import BackgroundArt from "@/app/_components/BackgroundArt";
-import CollectionSwitcher from "@/app/_components/CollectionSwitcher";
-import PaintingFrame from "@/app/_components/PaintingFrame";
+import Gallery from "@/app/_components/Gallery";
+import SiteFooterNav from "@/app/_components/SiteFooterNav";
 import type { Collection } from "@/app/_data/paintings";
 
-/** Renders a full collection page: title, vertically stacked paintings, switcher. */
+/** Renders a full collection page: title, clickable paintings, footer nav. */
 export default function CollectionView({
   collection,
 }: {
@@ -26,17 +26,9 @@ export default function CollectionView({
           </p>
         </header>
 
-        <div className="mt-14 flex w-full flex-col gap-20 sm:mt-16 sm:gap-24">
-          {collection.paintings.map((painting, index) => (
-            <PaintingFrame
-              key={painting.title}
-              painting={painting}
-              priority={index === 0}
-            />
-          ))}
-        </div>
+        <Gallery paintings={collection.paintings} />
 
-        <CollectionSwitcher currentSlug={collection.slug} />
+        <SiteFooterNav />
       </main>
     </>
   );
