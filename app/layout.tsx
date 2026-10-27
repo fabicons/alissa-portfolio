@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   title: "Alissa Borsani — Contemporary Artist",
   description:
     "Paintings by Alissa Borsani, a contemporary artist based in Mallorca. Explore Collection I, Collection II and current work.",
+};
+
+// Tints the iOS status bar / browser chrome to match the background wash so the
+// artwork appears to extend to the very edges of the screen.
+export const viewport: Viewport = {
+  themeColor: "#e8eff9",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
