@@ -17,7 +17,7 @@ export default function CollectionView({
         <header className="flex flex-col items-center text-center">
           <Link
             href="/"
-            className="text-2xl font-semibold tracking-[0.15em] transition-colors hover:text-[#011f60] sm:text-3xl"
+            className="font-serif text-2xl font-semibold tracking-[0.15em] transition-colors hover:text-[#011f60] sm:text-3xl"
           >
             ALISSA BORSANI
           </Link>

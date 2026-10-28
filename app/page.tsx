@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import alissa from "@/public/images/alissa.jpg";
 import BackgroundArt from "@/app/_components/BackgroundArt";
+import ContactLinks from "@/app/_components/ContactLinks";
 import SiteNav from "@/app/_components/SiteNav";
 import { getCollections } from "@/app/_data/paintings";
 
@@ -14,7 +15,7 @@ export default async function Home() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center px-5 py-12 sm:px-8 sm:py-16">
         {/* Hero */}
         <header className="flex flex-col items-center text-center">
-          <h1 className="text-4xl font-semibold tracking-[0.15em] sm:text-6xl lg:text-7xl">
+          <h1 className="font-serif text-4xl font-semibold tracking-[0.15em] sm:text-6xl lg:text-7xl">
             ALISSA BORSANI
           </h1>
           <p className="mt-4 text-sm tracking-[0.3em] text-[#011f60]/70 uppercase sm:text-base">
@@ -86,16 +87,26 @@ export default async function Home() {
             </h2>
             <p className="text-base leading-relaxed text-[#011f60]/80 sm:text-lg">
               {/* TODO: Replace with Alissa's real bio. */}
-              Alissa Borsani is a contemporary painter based in Mallorca, where
-              the Mediterranean light and the endless blue of the sea shape
-              every canvas. Her work moves between stillness and motion,
-              searching for that feeling of freedom found on the water&apos;s
-              horizon.
+              Alissa Borsani is is a multimedia artist based in Mallorca,
+              working primarily with acrylic, charcoal and layered mixed media
+              on canvas. Half German and half Italian, she was raised in
+              Mallorca, where the Mediterranean landscape, sea and light have
+              become an important influence on her visual language. Her work
+              moves between realism and abstraction, exploring the feminine form
+              through sensuality, emotion and strength. Women are a recurring
+              presence in her paintings, often portrayed in soft, intimate
+              moments while remaining grounded in a sense of inner power
             </p>
             <p className="text-base leading-relaxed text-[#011f60]/80 sm:text-lg">
               {/* TODO: Replace with Alissa's real bio. */}
-              Working primarily in blues and soft, luminous whites, each piece
-              is an invitation to pause, breathe, and look a little longer.
+              Rich in texture and layered colour, her paintings are drawn to
+              deep blues, turquoise hues and Mediterranean tones, reflecting a
+              lifelong connection to the sea. Gold is sometimes woven into the
+              surface, adding light, contrast and another layer of meaning. The
+              combination or warmth, water, light and femininity. Working across
+              smaller studies as well as medium and large-scale canvases, she
+              allows each piece to grow intuitively, creating atmospheric worlds
+              where the human figure, water and abstraction come together.
             </p>
           </div>
         </section>
@@ -108,6 +119,11 @@ export default async function Home() {
             in its stillness I find my own.&quot;
           </blockquote>
         </section>
+
+        {/* Contact */}
+        <footer className="mt-20 flex w-full flex-col items-center gap-6 border-t border-[#011f60]/15 pt-10 sm:mt-24">
+          <ContactLinks />
+        </footer>
       </main>
     </>
   );
