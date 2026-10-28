@@ -66,6 +66,8 @@ export default function Lightbox({
   const painting = paintings[index];
   const closeRef = useRef<HTMLButtonElement>(null);
   const activeThumbRef = useRef<HTMLButtonElement>(null);
+  // Start position of an in-progress touch, used to detect horizontal swipes.
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const goPrev = useCallback(
     () => onIndexChange((index - 1 + count) % count),
@@ -74,6 +76,27 @@ export default function Lightbox({
   const goNext = useCallback(
     () => onIndexChange((index + 1) % count),
     [index, count, onIndexChange],
+  );
+
+  // Touch swipe: navigate when a mostly-horizontal drag passes the threshold.
+  const onTouchStart = useCallback((event: React.TouchEvent) => {
+    const touch = event.changedTouches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  }, []);
+  const onTouchEnd = useCallback(
+    (event: React.TouchEvent) => {
+      const start = touchStart.current;
+      touchStart.current = null;
+      if (!start || count < 2) return;
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      // Require a clear horizontal intent to avoid hijacking vertical scrolls.
+      if (Math.abs(dx) < 50 || Math.abs(dx) <= Math.abs(dy)) return;
+      if (dx < 0) goNext();
+      else goPrev();
+    },
+    [count, goPrev, goNext],
   );
 
   // Keyboard controls.
@@ -164,11 +187,13 @@ export default function Lightbox({
       {/* Stage + caption */}
       <figure
         onClick={(event) => event.stopPropagation()}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
         className="flex min-h-0 flex-1 flex-col items-center justify-center px-4 pt-16 pb-4 [--lb-h:56svh] sm:[--lb-h:70svh]"
       >
         <Stage key={index} painting={painting} />
         <figcaption className="mt-5 shrink-0 text-center text-white">
-          <span className="block font-serif text-lg italic sm:text-xl tracking-tight">
+          <span className="block font-serif text-lg tracking-tight italic sm:text-xl">
             {painting.title}
           </span>
           <span className="mt-1 block text-sm text-white/60">
