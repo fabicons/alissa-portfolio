@@ -43,7 +43,7 @@ export default function PaintingFrame({
         </span>
       </div>
       <figcaption className="mt-4 text-center">
-        <span className="block font-serif text-xl tracking-wide italic sm:text-2xl">
+        <span className="block font-serif text-xl italic sm:text-2xl tracking-tight">
           {title}
         </span>
         <span className="mt-1 block text-sm text-[#011f60]/60">{size}</span>

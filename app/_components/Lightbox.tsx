@@ -168,7 +168,7 @@ export default function Lightbox({
       >
         <Stage key={index} painting={painting} />
         <figcaption className="mt-5 shrink-0 text-center text-white">
-          <span className="block font-serif text-lg tracking-wide italic sm:text-xl">
+          <span className="block font-serif text-lg italic sm:text-xl tracking-tight">
             {painting.title}
           </span>
           <span className="mt-1 block text-sm text-white/60">
