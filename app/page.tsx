@@ -22,7 +22,10 @@ export default async function Home() {
             Contemporary artist · Mallorca
           </p>
           <div className="mt-10">
-            <SiteNav variant="hero" />
+            <SiteNav
+              collections={collections.map(({ slug, name }) => ({ slug, name }))}
+              variant="hero"
+            />
           </div>
         </header>
 

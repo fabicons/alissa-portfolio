@@ -3,12 +3,7 @@
 import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const links = [
-  { href: "/collection-1", label: "Collection I" },
-  { href: "/collection-2", label: "Collection II" },
-  { href: "/current-work", label: "Current Work" },
-];
+import type { Collection } from "@/app/_data/paintings";
 
 /**
  * Primary site navigation: an elegant, letter-spaced horizontal menu with thin
@@ -17,11 +12,17 @@ const links = [
  * "inline" variant is framed by a hairline bar on inner pages.
  */
 export default function SiteNav({
+  collections,
   variant = "inline",
 }: {
+  collections: Pick<Collection, "slug" | "name">[];
   variant?: "hero" | "inline";
 }) {
   const pathname = usePathname();
+  const links = [
+    ...collections.map(({ slug, name }) => ({ href: `/${slug}`, label: name })),
+    { href: "/current-work", label: "Current Work" },
+  ];
 
   return (
     <nav
