@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import alissa from "@/public/images/alissa.jpg";
+import alissaStudio from "@/public/images/alissa_2.jpeg";
 import BackgroundArt from "@/app/_components/BackgroundArt";
 import ContactLinks from "@/app/_components/ContactLinks";
 import SiteNav from "@/app/_components/SiteNav";
@@ -70,16 +71,27 @@ export default async function Home() {
         {/* About / artist */}
         <section
           aria-labelledby="about-heading"
-          className="mt-20 grid w-full gap-10 sm:mt-24 md:grid-cols-2 md:items-center"
+          className="mt-20 grid w-full gap-10 sm:mt-24 lg:grid-cols-2 lg:items-center"
         >
-          <div className="relative mx-auto aspect-4/5 w-full max-w-md overflow-hidden rounded-sm bg-white shadow-[0_15px_50px_-20px_rgba(1,31,96,0.4)] ring-1 ring-[#011f60]/10">
-            <Image
-              src={alissa}
-              alt="Alissa Borsani in her studio"
-              fill
-              sizes="(min-width: 768px) 28rem, 100vw"
-              className="object-cover"
-            />
+          <div className="mx-auto grid w-full max-w-xl grid-cols-2 items-start gap-3 sm:gap-5">
+            <div className="relative aspect-2/3 overflow-hidden rounded-sm bg-white shadow-[0_15px_50px_-20px_rgba(1,31,96,0.4)] ring-1 ring-[#011f60]/10">
+              <Image
+                src={alissa}
+                alt="Alissa Borsani hanging one of her blue paintings"
+                fill
+                sizes="(min-width: 1024px) 252px, (min-width: 640px) 278px, calc(50vw - 26px)"
+                className="object-cover"
+              />
+            </div>
+            <div className="relative mt-12 aspect-2/3 overflow-hidden rounded-sm bg-white shadow-[0_15px_50px_-20px_rgba(1,31,96,0.4)] ring-1 ring-[#011f60]/10 sm:mt-20">
+              <Image
+                src={alissaStudio}
+                alt="Alissa Borsani holding a paintbrush beside a turquoise canvas in her studio"
+                fill
+                sizes="(min-width: 1024px) 252px, (min-width: 640px) 278px, calc(50vw - 26px)"
+                className="object-cover"
+              />
+            </div>
           </div>
           <div className="space-y-5">
             <h2
@@ -89,7 +101,6 @@ export default async function Home() {
               About the artist
             </h2>
             <p className="text-base leading-relaxed text-[#011f60]/80 sm:text-lg">
-              {/* TODO: Replace with Alissa's real bio. */}
               Alissa Borsani is is a multimedia artist based in Mallorca,
               working primarily with acrylic, charcoal and layered mixed media
               on canvas. Half German and half Italian, she was raised in
@@ -101,7 +112,6 @@ export default async function Home() {
               moments while remaining grounded in a sense of inner power
             </p>
             <p className="text-base leading-relaxed text-[#011f60]/80 sm:text-lg">
-              {/* TODO: Replace with Alissa's real bio. */}
               Rich in texture and layered colour, her paintings are drawn to
               deep blues, turquoise hues and Mediterranean tones, reflecting a
               lifelong connection to the sea. Gold is sometimes woven into the
@@ -117,7 +127,6 @@ export default async function Home() {
         {/* Quote / poem */}
         <section className="mt-20 w-full max-w-3xl sm:mt-24">
           <blockquote className="border-l-2 border-[#011f60]/40 pl-6 text-center text-2xl leading-relaxed italic sm:text-3xl">
-            {/* TODO: Replace with Alissa's chosen poem or quote. */}
             &quot;The sea does not ask permission to be blue — it simply is, and
             in its stillness I find my own.&quot;
           </blockquote>
